@@ -1,19 +1,48 @@
 import streamlit as st
 import random
+from datetime import datetime
+import pandas as pd
+import calendar
+import time
 
 # Define airline-themed colors
 primary_color = '#0066cc'  # Blue
 secondary_color = '#ffcc00'  # Yellow
 text_color = '#333333'  # Dark Gray
+background_color = '#f0f0f5'  # Light Gray
 
 # Define flight details
 flight_details = [
-    {"Flight No": "ABC123", "Departure": "New York", "Destination": "Los Angeles", "Departure Time": "08:00 AM",
-     "Arrival Time": "10:00 AM", "Gate": "A1", "Status": "On Time"},
-    {"Flight No": "DEF456", "Departure": "Los Angeles", "Destination": "Chicago", "Departure Time": "11:00 AM",
-     "Arrival Time": "01:00 PM", "Gate": "B2", "Status": "Delayed"},
-    {"Flight No": "GHI789", "Departure": "Chicago", "Destination": "Houston", "Departure Time": "02:00 PM",
-     "Arrival Time": "04:00 PM", "Gate": "C3", "Status": "On Time"},
+    {"Flight No": "AI101", "Departure": "Mumbai", "Destination": "Delhi", "Departure Time": "06:00 AM",
+     "Arrival Time": "08:00 AM", "Gate": "A1", "Status": "On Time"},
+    {"Flight No": "AI102", "Departure": "Delhi", "Destination": "Mumbai", "Departure Time": "09:00 AM",
+     "Arrival Time": "11:00 AM", "Gate": "A2", "Status": "Delayed"},
+    {"Flight No": "AI103", "Departure": "Bangalore", "Destination": "Chennai", "Departure Time": "12:00 PM",
+     "Arrival Time": "01:30 PM", "Gate": "B1", "Status": "On Time"},
+    {"Flight No": "AI104", "Departure": "Chennai", "Destination": "Bangalore", "Departure Time": "02:00 PM",
+     "Arrival Time": "03:30 PM", "Gate": "B2", "Status": "On Time"},
+    {"Flight No": "AI105", "Departure": "Kolkata", "Destination": "Hyderabad", "Departure Time": "04:00 PM",
+     "Arrival Time": "06:00 PM", "Gate": "C1", "Status": "Delayed"},
+    {"Flight No": "AI106", "Departure": "Hyderabad", "Destination": "Kolkata", "Departure Time": "07:00 PM",
+     "Arrival Time": "09:00 PM", "Gate": "C2", "Status": "On Time"},
+    {"Flight No": "AI107", "Departure": "Mumbai", "Destination": "Bangalore", "Departure Time": "10:00 PM",
+     "Arrival Time": "12:00 AM", "Gate": "D1", "Status": "On Time"},
+    {"Flight No": "AI108", "Departure": "Bangalore", "Destination": "Mumbai", "Departure Time": "01:00 AM",
+     "Arrival Time": "03:00 AM", "Gate": "D2", "Status": "On Time"},
+    {"Flight No": "AI109", "Departure": "Delhi", "Destination": "Chennai", "Departure Time": "04:00 AM",
+     "Arrival Time": "06:00 AM", "Gate": "E1", "Status": "On Time"},
+    {"Flight No": "AI110", "Departure": "Chennai", "Destination": "Delhi", "Departure Time": "07:00 AM",
+     "Arrival Time": "09:00 AM", "Gate": "E2", "Status": "Delayed"},
+]
+
+# Define motivational quotes
+motivational_quotes = [
+    "The sky is not the limit, it’s just the beginning.",
+    "Travel far, travel wide, travel often.",
+    "Your wings already exist. All you have to do is fly.",
+    "The world is a book, and those who do not travel read only a page.",
+    "Adventure awaits, go find it.",
+    "The journey of a thousand miles begins with one step.",
 ]
 
 # Function to generate recommendations based on user input
@@ -72,28 +101,28 @@ def generate_recommendations(customer_type, problem_domains):
 
     return recommendations
 
-# Function to display the dashboard after successful login
+# Function to display the dashboard
 def show_dashboard():
     # Display user profile information
     st.sidebar.title("User Profile")
     st.sidebar.image("Flightops1.png", use_column_width=True)
-    st.sidebar.subheader("Name:")
-    st.sidebar.write("Aprameya")
-    st.sidebar.subheader("Designation:")
-    st.sidebar.write("FlightOps Manager")
-    st.sidebar.subheader("Location:")
-    st.sidebar.write("Headquarters")
+    position = st.sidebar.selectbox("Select Your Position:", ["FlightOps Manager", "Customer Service Representative", "Pilot", "Cabin Crew"])
 
     # Display flight details table with enhanced styling
     st.subheader("Next Flight Details")
+    st.write(
+        '<style>'
+        'table {width: 100%; border-collapse: collapse;}'
+        'th, td {border: 1px solid #ddd; padding: 8px;}'
+        'th {background-color: #0066cc; color: white;}'
+        'tr:nth-child(even) {background-color: #f2f2f2;}'
+        'tr:hover {background-color: #ddd;}'
+        '</style>',
+        unsafe_allow_html=True
+    )
+
     flight_table = st.empty()
-    flight_table.write("Flight No\tDeparture\tDestination\tDeparture Time\tArrival Time\tGate\tStatus")
-    flight_table.write("--------\t----------\t------------\t--------------\t------------\t----\t------")
-    for flight in flight_details:
-        status_color = "green" if flight["Status"] == "On Time" else "red"
-        flight_table.write(f"{flight['Flight No']}\t{flight['Departure']}\t{flight['Destination']}\t"
-                           f"{flight['Departure Time']}\t{flight['Arrival Time']}\t{flight['Gate']}\t"
-                           f"<span style='color:{status_color}'>{flight['Status']}</span>", unsafe_allow_html=True)
+    flight_table.table(pd.DataFrame(flight_details))
 
     # Get user input for customer type
     customer_type = st.radio("Select the customer type you are catering to:", ["Loyal Customer", "Non-Frequent Customer"])
@@ -103,6 +132,20 @@ def show_dashboard():
         "Select your problem domains:",
         ["Seat Comfort", "Inflight Entertainment", "Food and Drink", "On-time Performance", "Baggage Handling", "Online Booking"]
     )
+
+    # Add a to-do list feature with checkboxes
+    st.sidebar.title("To-Do List")
+    todo_list = ["Check flight status", "Contact ground crew", "Schedule maintenance", "Review safety protocols"]
+    todo_status = [False] * len(todo_list)
+    for i, item in enumerate(todo_list):
+        todo_status[i] = st.sidebar.checkbox(item, key=f"todo_{i}")
+
+    # Add a calendar to track flights
+    st.sidebar.title("Flight Calendar")
+    today = datetime.today()
+    month_days = calendar.monthcalendar(today.year, today.month)
+    month_df = pd.DataFrame(month_days, columns=list(calendar.day_name))
+    st.sidebar.table(month_df)
 
     # Add a submit button
     if st.button("Submit"):
@@ -115,6 +158,14 @@ def show_dashboard():
             st.subheader(f"{problem_domain}:")
             for rec in recommendation:
                 st.write(rec)
+
+# Function to display a motivational quote as a marquee
+def display_marquee_quote():
+    quote = random.choice(motivational_quotes)
+    st.markdown(
+        f'<marquee style="color:{secondary_color}; font-size:20px;">{quote}</marquee>',
+        unsafe_allow_html=True
+    )
 
 # Define the main function to create the app
 def main():
@@ -130,19 +181,11 @@ def main():
     st.title("Welcome to Airline Recommendation System for FlightOps")
     st.subheader("Get personalized recommendations for your next flight Service!")
 
-    # Display account credentials
-    st.sidebar.title("Account Credentials")
-    username = st.sidebar.text_input("Username")
-    password = st.sidebar.text_input("Password", type="password")
-    login_button = st.sidebar.button("Login")
+    # Display the marquee quote
+    display_marquee_quote()
 
-    # Dummy authentication (replace with actual authentication logic)
-    if login_button:
-        if username == "aprameya1" and password == "123456":
-            st.success("Login successful!")
-            show_dashboard()
-        else:
-            st.error("Invalid username or password. Please try again.")
+    # Display the dashboard
+    show_dashboard()
 
 # Run the main function to start the app
 if __name__ == "__main__":
