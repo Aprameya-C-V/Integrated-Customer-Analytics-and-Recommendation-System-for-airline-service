@@ -167,6 +167,33 @@ def display_marquee_quote():
         unsafe_allow_html=True
     )
 
+# Function to display live flight status
+def display_flight_status():
+    st.sidebar.title("Live Flight Status")
+    flight_number = st.sidebar.text_input("Enter Flight Number:")
+    if st.sidebar.button("Check Status"):
+        status = random.choice(["On Time", "Delayed", "Cancelled"])
+        st.sidebar.write(f"Flight {flight_number} is currently {status}.")
+
+# Function to display weather information
+def display_weather_info():
+    st.sidebar.title("Weather Information")
+    location = st.sidebar.text_input("Enter Location:")
+    if st.sidebar.button("Get Weather"):
+        weather_info = random.choice(["Sunny", "Rainy", "Cloudy", "Stormy", "Clear"])
+        st.sidebar.write(f"The weather in {location} is currently {weather_info}.")
+
+# Function to display contact information
+def display_contact_info():
+    st.sidebar.title("Contact Information")
+    st.sidebar.write("Customer Service: 1800-123-456")
+    st.sidebar.write("Email: support@airline.com")
+    st.sidebar.write("Follow us on social media:")
+    st.sidebar.write("[Facebook](https://facebook.com)")
+    st.sidebar.write("[Twitter](https://twitter.com)")
+    st.sidebar.write("[Instagram](https://instagram.com)")
+
+# Define the main function to create the app
 # Define the main function to create the app
 def main():
     # Set page config
@@ -177,6 +204,9 @@ def main():
         initial_sidebar_state="expanded",
     )
 
+    # Display the airline logo image
+    st.image("airline_logo.png", use_column_width=True)
+
     # Set the title and description
     st.title("Welcome to Airline Recommendation System for FlightOps")
     st.subheader("Get personalized recommendations for your next flight Service!")
@@ -184,8 +214,18 @@ def main():
     # Display the marquee quote
     display_marquee_quote()
 
+    # Display live flight status
+    display_flight_status()
+
+    # Display weather information
+    display_weather_info()
+
+    # Display contact information
+    display_contact_info()
+
     # Display the dashboard
     show_dashboard()
+
 
 # Run the main function to start the app
 if __name__ == "__main__":
